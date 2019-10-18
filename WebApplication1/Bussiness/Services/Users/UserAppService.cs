@@ -4,7 +4,7 @@ using Bussiness.Services.Users.Dto;
 
 namespace Bussiness.Services
 {
-    
+
     public class UserAppService : AppService, IUserAppService
     {
         private IUserRepository _userRepository;
@@ -20,7 +20,7 @@ namespace Bussiness.Services
                 apellido = "Emy",
                 idRol = 1,
                 Nombre = name,
-                password=  "23",
+                password = "23",
                 status = true
             });
 
@@ -28,8 +28,15 @@ namespace Bussiness.Services
         }
 
 
-        public void SaveUser(UserDto user)
+        public void SaveUser(UserDto userDto)
         {
+            // Esto 
+            MyDbTest.Models.Usuario user = AutoMapp.Map<MyDbTest.Models.Usuario>(userDto);
+
+            _userRepository.Create(user);
+
+            // en  vez de esto
+
             _userRepository.Create(new MyDbTest.Models.Usuario()
             {
                 apellido = user.LastName,
@@ -38,6 +45,7 @@ namespace Bussiness.Services
                 password = user.Password,
                 status = user.Status
             });
+            // 
 
             _userRepository.SaveChanges();
         }
