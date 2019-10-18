@@ -7,19 +7,18 @@ using System.Linq.Expressions;
 
 namespace MyDbTest.Repositories
 {
-    public class Repository<T> : IRepository<T>  where T : class
+    public class Repository<T, Context> : IRepository<T, Context>  where T : class where Context : DbContext
     {
-
-        RestaurantDbContext Context;
+        Context MyContext;
 
         public Repository()
         {
-            Context = new RestaurantDbContext();
+            MyContext = Activator.CreateInstance<Context>();
         }
 
-        public Repository(RestaurantDbContext context)
+        public Repository(Context context)
         {
-            Context = context;
+            MyContext = context;
         }
 
         public T Single(Expression<Func<T, bool>> expression) 
@@ -29,18 +28,18 @@ namespace MyDbTest.Repositories
 
         public IQueryable<T> All() 
         {
-            return Context.Set<T>().AsQueryable();
+            return MyContext.Set<T>().AsQueryable();
         }
 
         public virtual IQueryable<T> Filter(Expression<Func<T, bool>> predicate) 
         {
-            return Context.Set<T>().Where<T>(predicate).AsQueryable<T>();
+            return MyContext.Set<T>().Where<T>(predicate).AsQueryable<T>();
         }
 
         public virtual IQueryable<T> Filter(Expression<Func<T, bool>> filter, out int total, int index = 0, int size = 50) 
         {
             int skipCount = index * size;
-            var _resetSet = filter != null ? Context.Set<T>().Where<T>(filter).AsQueryable() : Context.Set<T>().AsQueryable();
+            var _resetSet = filter != null ? MyContext.Set<T>().Where<T>(filter).AsQueryable() : MyContext.Set<T>().AsQueryable();
             _resetSet = skipCount == 0 ? _resetSet.Take(size) : _resetSet.Skip(skipCount).Take(size);
             total = _resetSet.Count();
             return _resetSet.AsQueryable();
@@ -49,25 +48,25 @@ namespace MyDbTest.Repositories
         public virtual T Create(T TObject) 
         {
 
-            var newEntry = Context.Set<T>().Add(TObject);
-            Context.SaveChanges();
+            var newEntry = MyContext.Set<T>().Add(TObject);
+            MyContext.SaveChanges();
             return newEntry;
         }
 
         public virtual int Delete(T TObject) 
         {
-            Context.Set<T>().Remove(TObject);
-            return Context.SaveChanges();
+            MyContext.Set<T>().Remove(TObject);
+            return MyContext.SaveChanges();
         }
 
         public virtual int Update(T TObject) 
         {
             try
             {
-                var entry = Context.Entry(TObject);
-                Context.Set<T>().Attach(TObject);
+                var entry = MyContext.Entry(TObject);
+                MyContext.Set<T>().Attach(TObject);
                 entry.State = EntityState.Modified;
-                return Context.SaveChanges();
+                return MyContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -79,41 +78,41 @@ namespace MyDbTest.Repositories
         {
             var objects = Filter(predicate);
             foreach (var obj in objects)
-                Context.Set<T>().Remove(obj);
-            return Context.SaveChanges();
+                MyContext.Set<T>().Remove(obj);
+            return MyContext.SaveChanges();
         }
 
         public bool Contains(Expression<Func<T, bool>> predicate) 
         {
-            return Context.Set<T>().Count<T>(predicate) > 0;
+            return MyContext.Set<T>().Count<T>(predicate) > 0;
         }
 
         public virtual T Find(params object[] keys)
         {
-            return (T)Context.Set<T>().Find(keys);
+            return (T)MyContext.Set<T>().Find(keys);
         }
 
         public virtual T Find(Expression<Func<T, bool>> predicate) 
         {
-            return Context.Set<T>().FirstOrDefault<T>(predicate);
+            return MyContext.Set<T>().FirstOrDefault<T>(predicate);
         }
 
 
         public virtual void ExecuteProcedure(String procedureCommand, params SqlParameter[] sqlParams)
         {
-            Context.Database.ExecuteSqlCommand(procedureCommand, sqlParams);
+            MyContext.Database.ExecuteSqlCommand(procedureCommand, sqlParams);
 
         }
 
         public virtual void SaveChanges()
         {
-            Context.SaveChanges();
+            MyContext.SaveChanges();
         }
 
         public void Dispose()
         {
-            if (Context != null)
-                Context.Dispose();
+            if (MyContext != null)
+                MyContext.Dispose();
         }
     }
 }

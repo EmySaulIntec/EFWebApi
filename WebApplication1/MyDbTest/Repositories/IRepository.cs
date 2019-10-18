@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace MyDbTest.Repositories
 {
-    public interface IRepository<T> : IDisposable where T: class
+    public interface IRepository<T, Context> : IDisposable where T: class where Context : DbContext
     {
         /// <summary>
         /// Gets all objects from database

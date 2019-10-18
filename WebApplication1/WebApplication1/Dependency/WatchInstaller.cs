@@ -1,10 +1,7 @@
-﻿using Bussiness.Repositories.User;
-using Bussiness.Services;
-using Bussiness.Services.Base;
+﻿using Bussiness.Services.Base;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using MyDbTest.Models;
 using MyDbTest.Repositories;
 using System.Linq;
 using System.Web.Http;
@@ -34,7 +31,7 @@ namespace WebApplication1.Dependency
             var interfaceList = assembly.GetTypes().Where(e => e.IsInterface &&
 
                 (e.GetInterfaces().Contains(typeof(IAppService))
-                 || e.GetInterfaces().Any(d => d.Name == typeof(IRepository<>).Name)
+                 || e.GetInterfaces().Any(d => d.Name == typeof(IRepository<,>).Name)
                  )
                 ).ToList();
             

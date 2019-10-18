@@ -1,4 +1,4 @@
-﻿using Bussiness.Repositories.User;
+﻿using Bussiness.Repositories.Users;
 using Bussiness.Services.Base;
 
 namespace Bussiness.Services
