@@ -1,5 +1,6 @@
 ﻿using Bussiness.Services;
 using Bussiness.Services.Customers;
+using Bussiness.Services.Users.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,9 +42,9 @@ namespace WebApplication1.Controllers
         }
 
         // POST api/values
-        public void Post([FromBody]string value)
+        public void Post([FromBody]UserDto user)
         {
-            _userAppService.SaveUser(value);
+            _userAppService.SaveUser(user);
         }
 
         // PUT api/values/5

@@ -1,8 +1,10 @@
 ﻿using Bussiness.Repositories.Users;
 using Bussiness.Services.Base;
+using Bussiness.Services.Users.Dto;
 
 namespace Bussiness.Services
 {
+    
     public class UserAppService : AppService, IUserAppService
     {
         private IUserRepository _userRepository;
@@ -20,6 +22,21 @@ namespace Bussiness.Services
                 Nombre = name,
                 password=  "23",
                 status = true
+            });
+
+            _userRepository.SaveChanges();
+        }
+
+
+        public void SaveUser(UserDto user)
+        {
+            _userRepository.Create(new MyDbTest.Models.Usuario()
+            {
+                apellido = user.LastName,
+                idRol = user.RolId,
+                Nombre = user.Name,
+                password = user.Password,
+                status = user.Status
             });
 
             _userRepository.SaveChanges();
